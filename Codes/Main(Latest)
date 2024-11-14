@@ -1,0 +1,41 @@
+
+#include <pcmConfig.h>
+#include <pcmRF.h>
+#include <TMRpcm.h>
+#include <SD.h>
+
+
+int throttlePin = A0;       // Analog pin connected to throttle position sensor
+int throttleValue = 0;
+
+const int chipSelect = 4;   // SD card CS pin
+TMRpcm audio;               // Create an audio object for playback
+
+void setup() {
+  Serial.begin(115200);
+  audio.speakerPin = 9;     // Define the speaker pin
+
+  // Initialize SD card
+  if (!SD.begin(chipSelect)) {
+    Serial.println("SD Card initialization failed!");
+    return;
+  }
+  Serial.println("SD Card initialized.");
+
+  // Start playing the audio file in a loop
+  audio.setVolume(0);       // Set initial volume
+  audio.play("Space.wav");
+}
+
+void loop() {
+  // Read throttle position
+  throttleValue = analogRead(throttlePin);
+  Serial.print("Throttle Position: ");
+  Serial.println(throttleValue);
+
+  // Map the throttle value (182 to 860) to volume range (0 to 6)
+  int volume = map(throttleValue, 182, 860, 0, 6);
+  audio.setVolume(volume);  // Set the volume based on throttle position
+
+  delay(500);               // Short delay for stability
+}
