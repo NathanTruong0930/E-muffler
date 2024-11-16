@@ -1,9 +1,13 @@
+/* Project : Exhaust System For Electric Car
+   Team: 14
+   Date: 11/02/24
+   Version: 1
+*/
 
 #include <pcmConfig.h>
 #include <pcmRF.h>
 #include <TMRpcm.h>
 #include <SD.h>
-
 
 int throttlePin = A0;       // Analog pin connected to throttle position sensor
 int throttleValue = 0;
