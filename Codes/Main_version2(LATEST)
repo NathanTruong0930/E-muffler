@@ -1,0 +1,128 @@
+/* Project : Exhaust System For Electric Car
+   Team: 14
+   Date: 11/16/24
+   Version: 2
+   Description: This Arduino code controls two speakers and integrates touch sensors for playback management. 
+  Speaker 1 adjusts its volume dynamically based on throttle input. 
+  Two touch sensors are used: the first toggles playback ON/OFF, and the second switches between two tracks. 
+  LED indicators show the playback state and the currently playing track.
+*/
+
+#include <pcmConfig.h>
+#include <pcmRF.h>
+#include <TMRpcm.h>
+#include <SD.h>
+
+int throttlePin = A0;         // Analog pin connected to throttle position sensor
+int throttleValue = 0;
+
+const int chipSelect = 4;     // SD card CS pin
+TMRpcm audio;                 // Create an audio object for playback
+
+int touchPin1 = 7;            // First touch sensor for ON/OFF control
+int touchPin2 = 8;            // Second touch sensor for switching tracks
+
+int ledState = 2;             // LED for ON/OFF state
+int ledTrack1 = 3;            // LED for Space.wav
+int ledTrack2 = 5;            // LED for Space2.wav
+
+bool isPlaying = false;       // Flag to track playback state (initially OFF)
+bool touchState1 = false;     // State of the first touch sensor
+bool prevTouchState1 = false; // Previous state of the first touch sensor
+bool touchState2 = false;     // State of the second touch sensor
+bool prevTouchState2 = false; // Previous state of the second touch sensor
+String currentTrack = "Space.wav"; // Default audio file
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(touchPin1, INPUT);  // Set first touch sensor pin as input
+  pinMode(touchPin2, INPUT);  // Set second touch sensor pin as input
+
+  pinMode(ledState, OUTPUT);  // Set LED pins as outputs
+  pinMode(ledTrack1, OUTPUT);
+  pinMode(ledTrack2, OUTPUT);
+
+  audio.speakerPin = 9;       // Define the speaker pin
+
+  // Initialize SD card
+  if (!SD.begin(chipSelect)) {
+    Serial.println("SD Card initialization failed!");
+    return;
+  }
+  Serial.println("SD Card initialized.");
+
+  // Initialize LEDs for OFF state
+  digitalWrite(ledState, LOW);   // Turn OFF the ON/OFF state LED
+  digitalWrite(ledTrack1, LOW); // Turn OFF Space.wav indicator
+  digitalWrite(ledTrack2, LOW); // Turn OFF Space2.wav indicator
+}
+
+void loop() {
+  // Read throttle position
+  throttleValue = analogRead(throttlePin);
+  Serial.print("Throttle Position: ");
+  Serial.println(throttleValue);
+
+  // Map the throttle value (182 to 860) to volume range (0 to 6)
+  int volume = map(throttleValue, 182, 860, 0, 6);
+
+  // Read the touch sensor states
+  touchState1 = digitalRead(touchPin1);
+  touchState2 = digitalRead(touchPin2);
+
+  // Handle ON/OFF toggle
+  if (touchState1 && !prevTouchState1) {
+    isPlaying = !isPlaying;
+
+    if (isPlaying) {
+      Serial.println("Sound ON");
+      audio.play(currentTrack.c_str()); // Resume playback
+      digitalWrite(ledState, HIGH);    // Turn ON the ON/OFF state LED
+      if (currentTrack == "Space.wav") {
+        digitalWrite(ledTrack1, HIGH); // Turn ON Space.wav indicator
+      } else {
+        digitalWrite(ledTrack2, HIGH); // Turn ON Space2.wav indicator
+      }
+    } else {
+      Serial.println("Sound OFF");
+      audio.stopPlayback();            // Stop playback
+      digitalWrite(ledState, LOW);     // Turn OFF the ON/OFF state LED
+      digitalWrite(ledTrack1, LOW);    // Turn OFF Space.wav indicator
+      digitalWrite(ledTrack2, LOW);    // Turn OFF Space2.wav indicator
+    }
+  }
+
+  // Handle track switching
+  if (touchState2 && !prevTouchState2) {
+    if (currentTrack == "Space.wav") {
+      currentTrack = "Space3.wav";
+      digitalWrite(ledTrack1, LOW);   // Turn OFF Space.wav indicator
+      if (isPlaying) {
+        digitalWrite(ledTrack2, HIGH); // Turn ON Space2.wav indicator
+      }
+    } else {
+      currentTrack = "Space.wav";
+      digitalWrite(ledTrack2, LOW);   // Turn OFF Space2.wav indicator
+      if (isPlaying) {
+        digitalWrite(ledTrack1, HIGH); // Turn ON Space.wav indicator
+      }
+    }
+
+    if (isPlaying) {
+      audio.play(currentTrack.c_str()); // Switch and play new track
+      Serial.print("Switched to track: ");
+      Serial.println(currentTrack);
+    }
+  }
+
+  // Update previous touch states
+  prevTouchState1 = touchState1;
+  prevTouchState2 = touchState2;
+
+  // Set volume only if the sound is playing
+  if (isPlaying) {
+    audio.setVolume(volume);
+  }
+
+  delay(10); // Short delay for stability
+}
