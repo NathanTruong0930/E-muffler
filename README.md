@@ -1,4 +1,5 @@
 Exhaust System for Electric Vehicles
+
 This project aims to enhance the driving experience of electric vehicles by creating a system that mimics the sound of a traditional car engine. While electric vehicles are known for their quiet operation, some drivers miss the auditory feedback that comes with accelerating and driving. Our solution is a customizable exhaust system that produces realistic engine sounds and visually engages the user with LED indicators.
 
 At the heart of the system is a custom-designed circuit board (PCB) that integrates key components like speakers, LEDs, touch sensors, and a throttle positioning sensor. The sounds are stored on a microSD card and played through dual speakers. One speaker produces a constant background hum, while the other changes its volume based on the throttle position, simulating acceleration. The system also features LED lights to indicate power status and track selection.
