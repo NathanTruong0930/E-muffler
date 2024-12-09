@@ -1,4 +1,4 @@
-Exhaust System for Electric Vehicles
+**Exhaust System for Electric Vehicles**
 
 This project aims to enhance the driving experience of electric vehicles by creating a system that mimics the sound of a traditional car engine. While electric vehicles are known for their quiet operation, some drivers miss the auditory feedback that comes with accelerating and driving. Our solution is a customizable exhaust system that produces realistic engine sounds and visually engages the user with LED indicators.
 
@@ -8,7 +8,12 @@ The exhaust system is user-friendly and easy to control. A touch sensor lets the
 
 This project combines practical engineering with creativity, offering a solution that balances the silence of electric vehicles with the sensory experience of traditional cars. Whether you’re a car enthusiast or just someone looking for a fun way to personalize your EV, this exhaust system brings sound and style to the future of driving.
 
-Project Schedule - Gantt Chart
-https://pdx127928.monday.com/boards/7800402463
+Team members:
+- Nathan Truong
+- Eisa ALsharifi
+- Aziz Alshaanban
+- Fernando Custodio Calderon
+
+Project Schedule - [Gantt Chart](https://pdx127928.monday.com/boards/7800402463)
 
 Note: The archive folder contains older revisions of homework files.
